@@ -10,9 +10,10 @@ import UIKit
 
 class BasicExampleViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,FSPagerViewDataSource,FSPagerViewDelegate {
     
-    fileprivate let sectionTitles = ["Configurations", "Decelaration Distance", "Item Size", "Interitem Spacing", "Number Of Items"]
+    fileprivate let sectionTitles = ["Configurations", "Decelaration Distance", "Alignment", "Item Size", "Interitem Spacing", "Number Of Items"]
     fileprivate let configurationTitles = ["Automatic sliding","Infinite"]
     fileprivate let decelerationDistanceOptions = ["Automatic", "1", "2"]
+    fileprivate let alignmentOptions: [FSPagerView.HorizontalAlignment] = [.left, .center, .right]
     fileprivate let imageNames = ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg"]
     fileprivate var numberOfItems = 7
     
@@ -44,7 +45,9 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             return self.configurationTitles.count
         case 1:
             return self.decelerationDistanceOptions.count
-        case 2,3,4:
+        case 2:
+            return alignmentOptions.count
+        case 3,4,5:
             return 1
         default:
             return 0
@@ -81,6 +84,23 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             }
             return cell;
         case 2:
+            // Horizontal Alignment
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
+            switch alignmentOptions[indexPath.row] {
+            case .left:
+                cell.textLabel?.text = "Left"
+                cell.accessoryType = pagerView.horizontalAlignment == .left ? .checkmark : .none
+            case .center:
+                cell.textLabel?.text = "Center"
+                cell.accessoryType = pagerView.horizontalAlignment == .center ? .checkmark : .none
+            case .right:
+                cell.textLabel?.text = "Right"
+                cell.accessoryType = pagerView.horizontalAlignment == .right ? .checkmark : .none
+            default:
+                break;
+            }
+            return cell;
+        case 3:
             // Item Spacing
             let cell = tableView.dequeueReusableCell(withIdentifier: "slider_cell")!
             let slider = cell.contentView.subviews.first as! UISlider
@@ -92,7 +112,7 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             }()
             slider.isContinuous = true
             return cell
-        case 3:
+        case 4:
             // Interitem Spacing
             let cell = tableView.dequeueReusableCell(withIdentifier: "slider_cell")!
             let slider = cell.contentView.subviews.first as! UISlider
@@ -100,7 +120,7 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             slider.value = Float(self.pagerView.interitemSpacing/20.0)
             slider.isContinuous = true
             return cell
-        case 4:
+        case 5:
             // Number Of Items
             let cell = tableView.dequeueReusableCell(withIdentifier: "slider_cell")!
             let slider = cell.contentView.subviews.first as! UISlider
@@ -119,7 +139,7 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
     // MARK:- UITableViewDelegate
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == 0 || indexPath.section == 1
+        return 0...2 ~= indexPath.row
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -143,6 +163,9 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             default:
                 break
             }
+            tableView.reloadSections([indexPath.section], with: .automatic)
+        case 2:
+            pagerView.horizontalAlignment = alignmentOptions[indexPath.row]
             tableView.reloadSections([indexPath.section], with: .automatic)
         default:
             break
