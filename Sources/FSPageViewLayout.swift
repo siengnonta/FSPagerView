@@ -16,6 +16,7 @@ class FSPagerViewLayout: UICollectionViewLayout {
     internal var needsReprepare = true
     internal var scrollDirection: FSPagerView.ScrollDirection = .horizontal
     internal var horizontalAlignment: FSPagerView.HorizontalAlignment = .center
+    internal var needsEdgeSpacing = false
     
     open override class var layoutAttributesClass: AnyClass {
         return FSPagerViewLayoutAttributes.self
@@ -146,10 +147,12 @@ class FSPagerViewLayout: UICollectionViewLayout {
         var midX: CGFloat = frame.midX
         if horizontalAlignment == .left {
             let offset = (collectionViewSize.width - frame.width)/2
-            midX -= offset
+            let edgeSpacing = needsEdgeSpacing ? actualInteritemSpacing : 0
+            midX -= (offset - edgeSpacing)
         } else if horizontalAlignment == .right {
             let offset = (collectionViewSize.width - frame.width)/2
-            midX += offset
+            let edgeSpacing = needsEdgeSpacing ? actualInteritemSpacing : 0
+            midX += (offset - edgeSpacing)
         }
         attributes.center = CGPoint(x: midX, y: frame.midY)
         attributes.size = self.actualItemSize

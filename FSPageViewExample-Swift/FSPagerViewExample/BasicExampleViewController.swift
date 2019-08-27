@@ -10,7 +10,7 @@ import UIKit
 
 class BasicExampleViewController: UIViewController,UITableViewDataSource,UITableViewDelegate,FSPagerViewDataSource,FSPagerViewDelegate {
     
-    fileprivate let sectionTitles = ["Configurations", "Decelaration Distance", "Alignment", "Item Size", "Interitem Spacing", "Number Of Items"]
+    fileprivate let sectionTitles = ["Configurations", "Decelaration Distance", "Alignment", "Alignment Spacing", "Item Size", "Interitem Spacing", "Number Of Items"]
     fileprivate let configurationTitles = ["Automatic sliding","Infinite"]
     fileprivate let decelerationDistanceOptions = ["Automatic", "1", "2"]
     fileprivate let alignmentOptions: [FSPagerView.HorizontalAlignment] = [.left, .center, .right]
@@ -47,7 +47,7 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             return self.decelerationDistanceOptions.count
         case 2:
             return alignmentOptions.count
-        case 3,4,5:
+        case 3,4,5,6:
             return 1
         default:
             return 0
@@ -101,6 +101,15 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             }
             return cell;
         case 3:
+            // Alignment Spacing
+            let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
+            let toggle = UISwitch(frame: .zero)
+            toggle.isOn = pagerView.needsEdgeSpacing
+            toggle.addTarget(self, action: #selector(switchValueChanged(_:)), for: .valueChanged)
+            cell.accessoryView = toggle
+            cell.textLabel?.text = "Active"
+            return cell;
+        case 4:
             // Item Spacing
             let cell = tableView.dequeueReusableCell(withIdentifier: "slider_cell")!
             let slider = cell.contentView.subviews.first as! UISlider
@@ -112,7 +121,7 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             }()
             slider.isContinuous = true
             return cell
-        case 4:
+        case 5:
             // Interitem Spacing
             let cell = tableView.dequeueReusableCell(withIdentifier: "slider_cell")!
             let slider = cell.contentView.subviews.first as! UISlider
@@ -120,7 +129,7 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             slider.value = Float(self.pagerView.interitemSpacing/20.0)
             slider.isContinuous = true
             return cell
-        case 5:
+        case 6:
             // Number Of Items
             let cell = tableView.dequeueReusableCell(withIdentifier: "slider_cell")!
             let slider = cell.contentView.subviews.first as! UISlider
@@ -139,7 +148,7 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
     // MARK:- UITableViewDelegate
     
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        return 0...2 ~= indexPath.row
+        return 0...3 ~= indexPath.row
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -225,6 +234,10 @@ class BasicExampleViewController: UIViewController,UITableViewDataSource,UITable
             break
         }
     }
+    
+    // MARK: - UISwitch
+    @objc func switchValueChanged(_ sender: UISwitch) {
+        pagerView.needsEdgeSpacing = sender.isOn
+    }
 }
-
 
